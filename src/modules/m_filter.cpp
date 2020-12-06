@@ -459,8 +459,7 @@ ModResult ModuleFilter::OnUserPreMessage(User* user, const MessageTarget& msgtar
 			ServerInstance->SNO->WriteGlobalSno('f', InspIRCd::Format("%s (%s) was shunned for %s (expires on %s) because their message (%s) to %s matched %s (%s)",
 				user->nick.c_str(), sh->Displayable().c_str(), InspIRCd::DurationString(f->duration).c_str(),
 				InspIRCd::TimeString(ServerInstance->Time() + f->duration).c_str(),
-				details.text,
-				msgtarget.GetName().c_str(), f->freeform.c_str(), f->reason.c_str()));
+				details.text.c_str(), msgtarget.GetName().c_str(), f->freeform.c_str(), f->reason.c_str()));
 			if (ServerInstance->XLines->AddLine(sh, NULL))
 			{
 				ServerInstance->XLines->ApplyLines();
