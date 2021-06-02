@@ -24,6 +24,7 @@
 
 
 #include "inspircd.h"
+#include "modules/account.h"
 #include "modules/ctctags.h"
 
 class ModuleRestrictMsg
@@ -45,7 +46,16 @@ class ModuleRestrictMsg
 			if (u->IsOper() || user->IsOper() || u->server->IsULine())
 				return MOD_RES_PASSTHRU;
 
-			user->WriteNumeric(Numerics::CannotSendTo(u, "You cannot send messages to this user."));
+			const AccountExtItem* accountext = GetAccountExtItem();
+
+			// Fail safe if we don't have account tracking up and running;
+			// otherwise, only allow message if sender is registered.
+			if (!accountext || accountext->get(user))
+				return MOD_RES_PASSTHRU;
+
+			user->WriteNumeric(Numerics::CannotSendTo(u, 
+			"Unregistered users may not send PMs on this network. "
+			"Please register your nick with NickServ."));
 			return MOD_RES_DENY;
 		}
 
